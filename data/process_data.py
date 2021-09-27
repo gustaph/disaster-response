@@ -1,16 +1,68 @@
 import sys
+import pandas as pd
+from sqlalchemy import create_engine
+
+def load_data(messages_filepath: str, categories_filepath: str):
+    '''
+    loads data from messages and categories
+    
+    Args:
+        - messages_filepath: str -> messages directory
+        - categories_filepath: -> categories directory
+    Returns:
+        - df: pd.DataFrame -> merged dataframe with messages and categories
+    '''
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    
+    df = messages.merge(categories, on='id')
+    
+    return df
 
 
-def load_data(messages_filepath, categories_filepath):
-    pass
+def clean_data(df: pd.DataFrame):
+    '''
+    cleaning focused on categories to get columns and values
+    
+    Args:
+        - df: pd.DataFrame -> merged dataframe with messages and categories
+    Returns:
+        - clean dataframe
+    '''
 
+    categories = df.categories.str.split(';', expand=True)
+    row = categories.loc[0]
+    categories.columns = row.apply(lambda r: r.split('-')[0])
+    
+    for column in categories:
+    # set each value to be the last character of the string
+        categories[column] = categories[column].apply(lambda row: row.split('-')[1])
+        
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+    
+    df.drop('categories', axis=1, inplace=True)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+    
+    # drop duplicates
+    df.drop_duplicates(inplace=True)
+    
+    return df
 
-def clean_data(df):
-    pass
+def save_data(df: pd.DataFrame, database_filename: str):
+    '''
+    save data in database
+    
+    Args:
+        - df: pd.DataFrame -> dataframe to be saved
+        - database_filename: str -> database directory
+    Returns:
+    '''
 
-
-def save_data(df, database_filename):
-    pass  
+    engine = create_engine(f'sqlite:///{database_filename}')
+    df.to_sql('disaster_response', engine, index=False, if_exists='replace')  
 
 
 def main():
