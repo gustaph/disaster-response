@@ -81,8 +81,7 @@ def build_model():
         - ideal model based on GridSearch
 
     > REFERENCES:
-    * Hyperparameter Tuning the Random Forest in Python [https://towardsdatascience.com/hyperparameter-tuning-the-random-forest-in-python-using-scikit-learn-28d2aa77dd74];
-    * Tuning the parameters of your Random Forest model [https://www.analyticsvidhya.com/blog/2015/06/tuning-random-forest-model/] 
+        * Understanding LightGBM Parameters (and How to Tune Them) [https://neptune.ai/blog/lightgbm-parameters-guide]
     '''
 
     # first set of parameters based on references
