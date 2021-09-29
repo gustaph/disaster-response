@@ -90,7 +90,7 @@ def build_model():
         'max_depth': 10,
         'num_leaves': 20,
         'feature_fraction': 0.6,
-        'n_estimators': 30,
+        'n_estimators': 150,
         'verbose': -1
     }
     

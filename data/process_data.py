@@ -40,7 +40,9 @@ def clean_data(df: pd.DataFrame):
         
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
-    
+
+    categories['related'] = categories['related'].apply(lambda row: 1 if row == 2 else row) # correcting related column numbering
+
     df.drop('categories', axis=1, inplace=True)
     
     # concatenate the original dataframe with the new `categories` dataframe

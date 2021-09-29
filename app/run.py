@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie
 import joblib
 from sqlalchemy import create_engine
 
@@ -60,8 +60,60 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
+
+    # 1st plot -----------
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    # 2nd plot -----------
+    total_counts = df.iloc[:,4:].sum().sort_values(ascending=False)
+    total_labels = list(total_counts.index)
+
+    # 3rd plot -----------
+    df_melt = pd.melt(df.drop(['id', 'message', 'original'], axis=1), id_vars=['genre'])
+    valid_counts = df_melt[df_melt['value'] == 1].groupby(['genre', 'variable'])['value'].value_counts()
+
+    top_news = valid_counts['news'].sort_values(ascending=False).head(10)
+    labels_news = list(top_news.index.get_level_values(0))
+    values_news = list(top_news.values)
+
+    top_direct = valid_counts['direct'].sort_values(ascending=False).head(10)
+    labels_direct = list(top_direct.index.get_level_values(0))
+    values_direct = list(top_direct.values)
+
+    top_social = valid_counts['social'].sort_values(ascending=False).head(10)
+    labels_social = list(top_social.index.get_level_values(0))
+    values_social = list(top_social.values)
+
+    standard = {
+        "hoverinfo": "label+percent+value",
+        "hole": .4,
+        "type": "pie"
+    }
+
+    data_social = {
+        "values": values_social,
+        "labels": labels_social,
+        "domain": {"column": 0},
+        "title": "Social"
+    }
+    data_social.update(standard)
+
+    data_direct = {
+        "values": values_direct,
+        "labels": labels_direct,
+        "domain": {"column": 1},
+        "title": "Direct"
+    }
+    data_direct.update(standard)
+
+    data_news = {
+        "values": values_news,
+        "labels": labels_news,
+        "domain": {"column": 2},
+        "title": "News"
+    }
+    data_news.update(standard)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -83,6 +135,19 @@ def index():
                     'title': "Genre"
                 }
             }
+        }, {
+            'data': [
+                Pie(data_social),
+                Pie(data_direct),
+                Pie(data_news)
+            ],
+
+            # (REFERENCE) Plotly - Bar Chart and Pie Chart [https://www.tutorialspoint.com/plotly/plotly_bar_and_pie_chart.htm]
+            'layout': {
+                "title": "Most common categories by genre",
+                "grid": {"rows": 1, "columns": 3}
+            }
+            
         }
     ]
     
