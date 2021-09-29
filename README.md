@@ -10,6 +10,15 @@
 
 This project consists of preparing text messages about real-life disasters, pre-labeled by [Figure Eight](https://appen.com), to build a supervised learning model. In short, you type a message and the program sorts it according to the 36 available labels, specifying the problem by different types of organization.
 
+For the supervised model building, I chose [LGBMClassifier](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMClassifier.html) over [RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) because of the higher speed in making the prediction (having almost the same accuracy as RF). LightGBM is a gradient boosting framework that uses tree based learning algorithms. It is designed to be distributed and efficient with the following advantages [[1]](https://www.kaggle.com/prashant111/lightgbm-classifier-in-python).
+
+- Faster training speed and higher efficiency.
+- Lower memory usage.
+- Better accuracy.
+- Support of parallel and GPU learning.
+- Capable of handling large-scale data.
+
+
 ![overview](https://user-images.githubusercontent.com/54601061/135074628-31b69cc6-0c81-4f8f-9715-df94d79165ae.gif)
 
 ---
